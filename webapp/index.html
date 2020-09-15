@@ -1,0 +1,242 @@
+<html>
+<head>
+	<title>BUZZER</title>
+	<style>
+		html, body {
+			font-family: 'Ubuntu', sans-serif;
+			color: white;
+			background-color: black;
+			text-align: center;
+			height: 100%;
+			margin: 0px;
+			transition: background-color 0.2s ease;
+		}
+		#player {
+			font-size: 180px;
+			padding-top: 10%;
+		}
+		#btnSettings {
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			opacity: 0.2;
+		}
+		#btnSettings:hover, #btnSettings:focus {
+			opacity: 1;
+		}
+		#settings {
+			border: 1px solid white;
+			background-color: rgba(100,100,100);
+			border-radius: 2px;
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			padding: 5px;
+		}
+		@media (prefers-color-scheme: dark) {
+		}
+	</style>
+	<script>
+		// #################################
+		var players = {
+			1 : { "name":"Player 1", "sound":"quack", "color":"#CD5C5C" },
+			2 : { "name":"Player 2", "sound":"gun1", "color":"#000080" },
+			3 : { "name":"Player 3", "sound":"gun2", "color":"#00FFFF" },
+			4 : { "name":"Player 4", "sound":"barbiegirl", "color":"#FF69B4" },
+			5 : { "name":"Player 5", "sound":"servicebell", "color":"#808000" },
+			6 : { "name":"Player 6", "sound":"slotmachine", "color":"#A52A2A" }
+		};
+		var sounds = {
+			"barbiegirl":"Barbie Girl",
+			"buzzer":"Classic Buzzer",
+			"fanfare":"Fanfare",
+			"fart":"Fart",
+			"gun1":"Gun 1",
+			"gun2":"Gun 2",
+			"gun3":"Gun 3",
+			"quack":"Quack",
+			"servicebell":"Service Bell",
+			"slotmachine":"Slotmachine",
+			"tvtotal":"TV-Total-Buzzer"
+		};
+		// #################################
+
+		window.onbeforeunload = function() { return 'Are you sure you want to leave?'; };
+
+		function handleKeyDown(event) {
+			switch(event.keyCode) {
+				case 8:
+					reset();
+					break;
+				case 49:
+					playerBuzzer(1);
+					break;
+				case 50:
+					playerBuzzer(2);
+					break;
+				case 51:
+					playerBuzzer(3);
+					break;
+				case 52:
+					playerBuzzer(4);
+					break;
+				case 53:
+					playerBuzzer(5);
+					break;
+				case 54:
+					playerBuzzer(6);
+					break;
+				case 88:
+					playSound('fail');
+					break;
+			}
+		}
+
+		var currentTimeout = null;
+		function playerBuzzer(player) {
+			var playerSettings = players[player];
+			set(playerSettings['color'], playerSettings['name']);
+			playSound(playerSettings['sound']);
+
+			clearTimeout(currentTimeout);
+			currentTimeout = setTimeout(function(){ reset(); }, 3000);
+		}
+		function set(color, text) {
+			body.style.backgroundColor = color;
+			player.innerHTML = text;
+		}
+		function reset() {
+			body.style.backgroundColor = 'initial';
+			player.innerHTML = '';
+		}
+		function playSound(trackName) {
+			var audio = new Audio('sounds/'+trackName+'.mp3');
+			audio.play();
+		}
+
+		function loadSettings() {
+			var settingsString = getCookie('BuzzerSettings');
+			if(typeof settingsString !== 'undefined' && settingsString != '') {
+				var tmpPlayers = JSON.parse(settingsString);
+				if(tmpPlayers != null) {
+					players = tmpPlayers;
+					console.log('Settings loaded from Cookie! ' + settingsString);
+				}
+			}
+		}
+		function saveSettings() {
+			var settingsString = JSON.stringify(players);
+			setCookie('BuzzerSettings', settingsString, 999);
+		}
+
+		function loadSettingsForm() {
+			removeAllOptions(sltPlayer1Sound);
+			removeAllOptions(sltPlayer2Sound);
+			removeAllOptions(sltPlayer3Sound);
+			removeAllOptions(sltPlayer4Sound);
+			removeAllOptions(sltPlayer5Sound);
+			removeAllOptions(sltPlayer6Sound);
+			for(index in sounds) {
+				sltPlayer1Sound.options[sltPlayer1Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer2Sound.options[sltPlayer2Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer3Sound.options[sltPlayer3Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer4Sound.options[sltPlayer4Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer5Sound.options[sltPlayer5Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer6Sound.options[sltPlayer6Sound.options.length] = new Option(sounds[index], index);
+			}
+			for(var i = 1; i <= 6; i++) {
+				document.getElementById('txtPlayer'+i+'Name').value = players[i]['name'];
+				document.getElementById('clrPlayer'+i+'Color').value = players[i]['color'];
+				document.getElementById('sltPlayer'+i+'Sound').value = players[i]['sound'];
+			}
+		}
+		function saveSettingsForm() {
+			for(var i = 1; i <= 6; i++) {
+				players[i]['name'] = document.getElementById('txtPlayer'+i+'Name').value;
+				players[i]['color'] = document.getElementById('clrPlayer'+i+'Color').value;
+				players[i]['sound'] = document.getElementById('sltPlayer'+i+'Sound').value;
+			}
+			saveSettings();
+		}
+
+		function removeAllOptions(selectBox) {
+			while(selectBox.options.length > 0) {
+				selectBox.remove(0);
+			}
+		}
+
+		function setCookie(name,value,days) {
+			var expires = "";
+			if (days) {
+				var date = new Date();
+				date.setTime(date.getTime() + (days*24*60*60*1000));
+				expires = "; expires=" + date.toUTCString();
+			}
+			document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+		}
+		function getCookie(name) {
+			var nameEQ = name + "=";
+			var ca = document.cookie.split(';');
+			for(var i=0;i < ca.length;i++) {
+				var c = ca[i];
+				while (c.charAt(0)==' ') c = c.substring(1,c.length);
+				if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+			}
+			return null;
+		}
+		function eraseCookie(name) {
+			document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		}
+	</script>
+</head>
+<body id='body' onkeydown='handleKeyDown(event)' onload='loadSettings()'>
+
+	<h1 id='player'></h1>
+
+	<button id='btnSettings' onclick='loadSettingsForm();settings.style.display="block"'>⚙️</button>
+	<div id='settings' style='display:none'>
+		<table>
+			<tr>
+				<th>1</th>
+				<td><input id='txtPlayer1Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer1Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer1Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td><input id='txtPlayer2Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer2Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer2Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td><input id='txtPlayer3Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer3Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer3Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td><input id='txtPlayer4Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer4Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer4Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td><input id='txtPlayer5Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer5Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer5Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td><input id='txtPlayer6Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer6Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer6Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th colspan='4'><button onclick='saveSettingsForm();settings.style.display="none"'>Save</button></th>
+			</tr>
+		</table>
+	</div>
+
+</body>
+</html>
