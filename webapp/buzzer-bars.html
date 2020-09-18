@@ -198,7 +198,7 @@
 					players = tmpPlayers;
 					console.log('Settings loaded from Cookie! ' + settingsString);
 					for(var i = 1; i <= 6; i++) {
-						if(players[i]['score'] == 'undefined') { players[i]['score'] = 0; }
+						if(typeof players[i]['score'] === 'undefined') { players[i]['score'] = 0; }
 					}
 				}
 			}
