@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BUZZER</title>
+	<script src='cookie.js'></script>
+	<style>
+		html, body {
+			font-family: 'Ubuntu', sans-serif;
+			color: white;
+			background-color: black;
+			text-align: center;
+			height: 100%;
+			margin: 0px;
+			transition: background-color 0.2s ease;
+		}
+		#player {
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			font-size: 180px;
+			padding: 10%;
+			margin: 0px;
+			backdrop-filter: blur(40px);
+			transition: opacity 0.2s ease;
+			pointer-events: none;
+			opacity: 0;
+		}
+		#container {
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			bottom: 0px;
+			right: 0px;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: stretch;
+			justify-content: center;
+			font-size: 24px;
+		}
+		#container > .player {
+			margin: 2%;
+			flex-grow: 1;
+			flex-shrink: 1;
+		}
+		#container > .player > .bar {
+			padding: 0px 20%;
+			height: 80%;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+		}
+		#container > .player > .bar > div.bar {
+			border-radius: 8px;
+			box-shadow: 0px 0px 10px rgba(150,150,150,0.2);
+			height: 0px;
+			width: 100%;
+			background-color: gray;
+			transition: height 0.4s ease;
+		}
+		#container > .player > .name {
+			height: 10%;
+		}
+		#container > .player > .score {
+			height: 10%;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			align-items: center;
+		}
+		#container > .player > .score > span.score {
+			font-weight: bold;
+		}
+		#container > .player > .score > button {
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+		#container > .player > .score:hover > button {
+			opacity: 1;
+		}
+		#container input,
+		#container select {
+			background-color: transparent;
+			text-align: center;
+			border: 1px solid transparent;
+			border-radius: 2px;
+			color: inherit;
+			font-family: inherit;
+			font-size: inherit;
+			transition: border 0.2s ease;
+			width: 100%;
+			box-sizing: border-box;
+		}
+		#container input:focus,
+		#container select:focus {
+			outline: 2px solid white;
+			outline-offset: 0px;
+		}
+		#container > .player > .name:hover input,
+		#container > .player > .name:hover select {
+			border: 1px solid gray;
+		}
+		#container > .player > .name > .additional {
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+		#container > .player > .name:hover > .additional {
+			opacity: 1;
+		}
+	</style>
+	<script>
+		// #################################
+		var players = {
+			1 : { "name":"Player 1", "sound":"quack", "color":"#00e8a4", "score":3 },
+			2 : { "name":"Player 2", "sound":"gun1", "color":"#ffbd26", "score":5 },
+			3 : { "name":"Player 3", "sound":"gun2", "color":"#ff7f7d", "score":2 },
+			4 : { "name":"Player 4", "sound":"barbiegirl", "color":"#6c848f", "score":1 },
+			5 : { "name":"Player 5", "sound":"servicebell", "color":"#8b72da", "score":4 },
+			6 : { "name":"Player 6", "sound":"slotmachine", "color":"#8ed7fa", "score":2 }
+		};
+		var sounds = {
+			"barbiegirl":"Barbie Girl",
+			"buzzer":"Classic Buzzer",
+			"fanfare":"Fanfare",
+			"fart":"Fart",
+			"gun1":"Gun 1",
+			"gun2":"Gun 2",
+			"gun3":"Gun 3",
+			"quack":"Quack",
+			"servicebell":"Service Bell",
+			"slotmachine":"Slotmachine",
+			"tvtotal":"TV-Total-Buzzer"
+		};
+		// #################################
+
+		window.onbeforeunload = function() { return 'Are you sure you want to leave?'; };
+
+		function handleKeyDown(event) {
+			switch(event.keyCode) {
+				case 8:
+					reset();
+					break;
+				case 49:
+					playerBuzzer(1);
+					break;
+				case 50:
+					playerBuzzer(2);
+					break;
+				case 51:
+					playerBuzzer(3);
+					break;
+				case 52:
+					playerBuzzer(4);
+					break;
+				case 53:
+					playerBuzzer(5);
+					break;
+				case 54:
+					playerBuzzer(6);
+					break;
+				case 88:
+					playSound('fail');
+					break;
+			}
+		}
+
+		var currentTimeout = null;
+		function playerBuzzer(player) {
+			var playerSettings = players[player];
+			set(playerSettings['color'], playerSettings['name']);
+			playSound(playerSettings['sound']);
+
+			clearTimeout(currentTimeout);
+			currentTimeout = setTimeout(function(){ reset(); }, 3000);
+		}
+		function set(color, text) {
+			body.style.backgroundColor = color;
+			player.innerHTML = text;
+			player.style.opacity = 1;
+		}
+		function reset() {
+			body.style.backgroundColor = 'initial';
+			player.innerHTML = '';
+			player.style.opacity = 0;
+		}
+		function playSound(trackName) {
+			var audio = new Audio('sounds/'+trackName+'.mp3');
+			audio.play();
+		}
+
+		function loadSettings() {
+			var settingsString = getCookie('BuzzerSettings');
+			if(typeof settingsString !== 'undefined' && settingsString != '') {
+				var tmpPlayers = JSON.parse(settingsString);
+				if(tmpPlayers != null) {
+					players = tmpPlayers;
+					console.log('Settings loaded from Cookie! ' + settingsString);
+					for(var i = 1; i <= 6; i++) {
+						if(players[i]['score'] == 'undefined') { players[i]['score'] = 0; }
+					}
+				}
+			}
+			loadSettingsForm();
+		}
+		function saveSettings() {
+			var settingsString = JSON.stringify(players);
+			setCookie('BuzzerSettings', settingsString, 999);
+		}
+
+		function loadSettingsForm() {
+			removeAllOptions(sltPlayer1Sound);
+			removeAllOptions(sltPlayer2Sound);
+			removeAllOptions(sltPlayer3Sound);
+			removeAllOptions(sltPlayer4Sound);
+			removeAllOptions(sltPlayer5Sound);
+			removeAllOptions(sltPlayer6Sound);
+			for(index in sounds) {
+				sltPlayer1Sound.options[sltPlayer1Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer2Sound.options[sltPlayer2Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer3Sound.options[sltPlayer3Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer4Sound.options[sltPlayer4Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer5Sound.options[sltPlayer5Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer6Sound.options[sltPlayer6Sound.options.length] = new Option(sounds[index], index);
+			}
+			for(var i = 1; i <= 6; i++) {
+				document.getElementById('txtPlayer'+i+'Name').value = players[i]['name'];
+				document.getElementById('clrPlayer'+i+'Color').value = players[i]['color'];
+				document.getElementById('sltPlayer'+i+'Sound').value = players[i]['sound'];
+			}
+		}
+		function saveSettingsForm() {
+			for(var i = 1; i <= 6; i++) {
+				players[i]['name'] = document.getElementById('txtPlayer'+i+'Name').value;
+				players[i]['color'] = document.getElementById('clrPlayer'+i+'Color').value;
+				players[i]['sound'] = document.getElementById('sltPlayer'+i+'Sound').value;
+			}
+			saveSettings();
+			redrawBars();
+		}
+
+		function removeAllOptions(selectBox) {
+			while(selectBox.options.length > 0) {
+				selectBox.remove(0);
+			}
+		}
+
+		function addPoints(player, points) {
+			var newScore = players[player]['score'] + points;
+			players[player]['score'] = Math.max(0, newScore);
+			saveSettingsForm();
+		}
+		function redrawBars() {
+			var max = 0;
+			for(var i = 1; i <= 6; i++) {
+				max = Math.max(max, players[i]['score']);
+			}
+			for(var i = 1; i <= 6; i++) {
+				var percent = players[i]['score'] * 100 / max;
+				document.getElementById('spnPlayer'+i+'Score').innerHTML = players[i]['score'];
+				document.getElementById('divPlayer'+i+'Bar').style.height = percent+'%';
+				document.getElementById('divPlayer'+i+'Bar').style.backgroundColor = players[i]['color'];
+			}
+		}
+	</script>
+</head>
+<body id='body' onkeydown='handleKeyDown(event)' onload='loadSettings();redrawBars();'>
+
+	<div id='container'>
+
+		<div class='player'>
+			<div class='bar'><div id='divPlayer1Bar' class='bar'></div></div>
+			<div class='score'>
+				<button onclick='addPoints(1,1)'>+</button>
+				<span id='spnPlayer1Score' class='score'>0</span>
+				<button onclick='addPoints(1,-1)'>-</button>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer1Name' onchange='saveSettingsForm()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer1Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer1Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='bar'><div id='divPlayer2Bar' class='bar'></div></div>
+			<div class='score'>
+				<button onclick='addPoints(2,1)'>+</button>
+				<span id='spnPlayer2Score' class='score'>0</span>
+				<button onclick='addPoints(2,-1)'>-</button>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer2Name' onchange='saveSettingsForm()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer2Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer2Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='bar'><div id='divPlayer3Bar' class='bar'></div></div>
+			<div class='score'>
+				<button onclick='addPoints(3,1)'>+</button>
+				<span id='spnPlayer3Score' class='score'>0</span>
+				<button onclick='addPoints(3,-1)'>-</button>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer3Name' onchange='saveSettingsForm()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer3Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer3Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='bar'><div id='divPlayer4Bar' class='bar'></div></div>
+			<div class='score'>
+				<button onclick='addPoints(4,1)'>+</button>
+				<span id='spnPlayer4Score' class='score'>0</span>
+				<button onclick='addPoints(4,-1)'>-</button>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer4Name' onchange='saveSettingsForm()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer4Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer4Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='bar'><div id='divPlayer5Bar' class='bar'></div></div>
+			<div class='score'>
+				<button onclick='addPoints(5,1)'>+</button>
+				<span id='spnPlayer5Score' class='score'>0</span>
+				<button onclick='addPoints(5,-1)'>-</button>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer5Name' onchange='saveSettingsForm()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer5Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer5Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='bar'><div id='divPlayer6Bar' class='bar'></div></div>
+			<div class='score'>
+				<button onclick='addPoints(6,1)'>+</button>
+				<span id='spnPlayer6Score' class='score'>0</span>
+				<button onclick='addPoints(6,-1)'>-</button>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer6Name' onchange='saveSettingsForm()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer6Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer6Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h1 id='player'></h1>
+
+</body>
+</html>
