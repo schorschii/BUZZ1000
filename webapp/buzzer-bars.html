@@ -256,13 +256,13 @@
 
 		function addPoints(player, points) {
 			var newScore = players[player]['score'] + points;
-			players[player]['score'] = Math.max(0, newScore);
+			players[player]['score'] = newScore;
 			saveSettingsForm();
 		}
 		function redrawBars() {
 			var max = 0;
 			for(var i = 1; i <= 6; i++) {
-				max = Math.max(max, players[i]['score']);
+				max = Math.max(max, Math.max(0, players[i]['score']));
 			}
 			for(var i = 1; i <= 6; i++) {
 				var percent = max == 0 ? 0 : players[i]['score'] * 100 / max;
