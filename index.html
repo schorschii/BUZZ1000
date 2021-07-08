@@ -5,18 +5,48 @@
 		html, body {
 			font-family: 'Ubuntu', sans-serif;
 		}
+		.subtitle {
+			font-style: italic;
+			color: gray;
+		}
+		.bold {
+			font-weight: bold;
+		}
+		.infobox {
+			display: inline-block;
+			padding: 0px 16px;
+			background: #e1f1f6;
+			color: #565656;
+			border: 1px solid #49afd9;
+			border-radius: 2px;
+		}
 	</style>
 </head>
 <body>
+
 	<h1>BUZZ1000 Webapps</h1>
-	<p>Arduino Controlled Buzzer System For Events</p>
+	<p class='subtitle'>Arduino Controlled Buzzer System For Events</p>
+
 	<p>Please connect the system to your computer and open a buzzer app:</p>
 	<ul>
 		<li><a href="webapp/buzzer-simple.html">Simple Buzzer App</a></li>
 		<li><a href="webapp/buzzer-bars.html">Buzzer App With Bars</a></li>
 	</ul>
+
+	<div class='infobox'>
+		<p class='bold'>
+			How to play offline
+		</p>
+		<ol>
+			<li>Go to the <a href="https://github.com/schorschii/buzz1000">GitHub repo</a>, click on "Code" -> "Download ZIP"</li>
+			<li>Extract the ZIP file onto your desktop</li>
+			<li>Open index.html with Chrome or Firefox</li>
+		</ol>
+	</div>
+
 	<p>
 		Please visit the <a href="https://github.com/schorschii/buzz1000">Github repository</a> for more information.
 	</p>
+
 </body>
 </html>
