@@ -29,6 +29,7 @@ Jack connector pinout:
 
 ## Software Documentation
 This is how you can update your buzzer controller.
+
 0. Install the [Arduino IDE](https://www.arduino.cc/en/software) and connect your Arduino.
    - Menu: Tools -> Board -> Arduino MK WiFi 1010
    - Menu: Tools -> Port -> Select your connected Buzzer Arduino
