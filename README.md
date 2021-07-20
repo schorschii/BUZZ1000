@@ -7,6 +7,9 @@ The Buzz1000 is an Arduino-controlled buzzer system for events, e.g. Quizzes or 
 
 When you press a buzzer, the controller sends a keystroke (digits 1 to 6) to the connected computer. This allows the computer to contribute to game atmosphere, e.g. by playing sound effects.
 
+**[Launch the Buzzer Webapps](https://schorschii.github.io/buzz1000)**  
+You can test the webapps by pressing the keys 1-6 on your keyboard. You can also play offline (please read the instructions on the start page).
+
 - [Simple Buzzer Webapp](https://schorschii.github.io/buzz1000/webapp/buzzer-simple.html)  
   Shows player name and plays sound when key 1..6 is pressed
 - [Buzzer Webapp With Bars](https://schorschii.github.io/buzz1000/webapp/buzzer-bars.html)  
@@ -14,4 +17,20 @@ When you press a buzzer, the controller sends a keystroke (digits 1 to 6) to the
 
 Each buzzer is equipped with 14 LEDs, which start to play different light effects when pressed. This makes it clear which player pressed his buzzer first.
 
-The system can also be ordered fully assembled. Please contact me if you are interested.
+## Hardware Documentation
+The system's main components are:
+- 1x Arduino MKR WiFi 1010
+- 6x Giovenzana PG1M9W01 (Inexpensive Mushroom Head Push Buttom)
+- WS2812B RGB LED Stripe (50 SMD LEDs per meter -> 14 LEDs inside each Buzzer Head)
+- 3,5mm **4pin** Jack Connector/Cable between Arduino and Buzzer
+
+Jack connector pinout:  
+![Jack Connector Pinout](.github/jack-pinout.png)
+
+## Software Documentation
+This is how you can update your buzzer controller.
+0. Install the [Arduino IDE](https://www.arduino.cc/en/software) and connect your Arduino.
+   - Menu: Tools -> Board -> Arduino MK WiFi 1010
+   - Menu: Tools -> Port -> Select your connected Buzzer Arduino
+1. Download this repo and open the file `arduino/buzzer/buzzer.ino` in the IDE.
+2. Upload the software (Menu: Sketch -> Upload).
