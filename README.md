@@ -33,5 +33,7 @@ This is how you can update your buzzer controller.
 0. Install the [Arduino IDE](https://www.arduino.cc/en/software) and connect your Arduino.
    - Menu: Tools -> Board -> Arduino MK WiFi 1010
    - Menu: Tools -> Port -> Select your connected Buzzer Arduino
-1. Download this repo and open the file `arduino/buzzer/buzzer.ino` in the IDE.
-2. Upload the software (Menu: Sketch -> Upload).
+1. Install the FastLED library.
+   - Menu: Sketch -> Include Library -> Manage Libraries ... -> Search "FastLED" -> Click "Install" -> Close
+2. Download this BUZZ1000 repo and open the file `arduino/buzzer/buzzer.ino` in the IDE.
+3. Upload the software to the Arduino (Menu: Sketch -> Upload).
