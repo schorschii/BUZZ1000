@@ -7,6 +7,7 @@
 #define NUM_LEDS    14
 #define BRIGHTNESS         255
 #define FRAMES_PER_SECOND  120
+#define BUZZER_LOCK_TIMEOUT 2000
 
 // for Arduino MKR WiFi 1010
 #define BUZZER1_LED     0
@@ -57,7 +58,7 @@ void loop() {
   EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
 
 // check button press
-if(lastPress == 0 || millis()-lastPress > 3000) {
+if(lastPress == 0 || millis()-lastPress > BUZZER_LOCK_TIMEOUT) {
   if(digitalRead(BUZZER1_SWITCH) == LOW) {
     startLed1();
     pressKey('1');
