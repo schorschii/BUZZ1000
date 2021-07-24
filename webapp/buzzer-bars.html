@@ -77,9 +77,22 @@
 		#container > .player > .score > button {
 			opacity: 0;
 			transition: opacity 0.2s ease;
+			background: transparent;
+			color: white;
+			border: 1px solid white;
+			border-radius: 2px;
+			font-size: 20px;
+			font-weight: bold;
+			padding: 2px 8px;
+			width: 30px;
+			height: 30px;
 		}
 		#container > .player > .score:hover > button {
 			opacity: 1;
+		}
+		#container > .player > .score > button:active {
+			background: white;
+			color: black;
 		}
 		#container input,
 		#container select {
