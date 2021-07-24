@@ -1,0 +1,308 @@
+<html>
+<head>
+	<title>BUZZER</title>
+	<link rel='shortcut icon' type='image/svg' href='buzzer.svg'>
+	<script src='cookie.js'></script>
+	<style>
+		html, body {
+			font-family: 'Ubuntu', sans-serif;
+			color: white;
+			background-color: black;
+			text-align: center;
+			height: 100%;
+			margin: 0px;
+			transition: background-color 0.2s ease;
+			font-size: 24px;
+		}
+		#player {
+			font-size: 180px;
+			padding-top: 10%;
+		}
+		#btnSettings {
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			transition: opacity 0.2s ease;
+			background: transparent;
+			color: white;
+			border: none;
+			border-radius: 2px;
+			opacity: 0.2;
+			font-weight: bold;
+			padding: 4px;
+			animation: blink 3s linear 0s;
+		}
+		#btnSettings:hover, #btnSettings:focus {
+			opacity: 1;
+		}
+		#btnSettings:active {
+			background: white;
+			color: black;
+		}
+		#btnSave {
+			width: 100%;
+			font-weight: bold;
+		}
+		#settings {
+			border: 1px solid white;
+			background-color: rgba(100,100,100);
+			border-radius: 2px;
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			padding: 5px;
+		}
+		input:not([type=color]), select, textarea, button {
+			font-size: inherit;
+			font-family: inherit;
+			padding: 4px;
+		}
+		input[type=color] {
+			padding: 2px;
+			height: 30px;
+		}
+		@keyframes blink {
+			00% {opacity: 1.0}
+			20% {opacity: 0.2}
+			40% {opacity: 1.0}
+			60% {opacity: 0.2}
+			80% {opacity: 1.0}
+			100% {opacity: 0.2}
+		}
+		#spnTimerInfo {
+			pointer-events: none;
+			position: absolute;
+			top: 15px;
+			left: 10px;
+			right: 10px;
+		}
+		@media (prefers-color-scheme: dark) {
+		}
+	</style>
+	<script>
+		// #################################
+		var players = {
+			1 : { "name":"Player 1", "sound":"quack", "color":"#CD5C5C" },
+			2 : { "name":"Player 2", "sound":"gun1", "color":"#000080" },
+			3 : { "name":"Player 3", "sound":"gun2", "color":"#00FFFF" },
+			4 : { "name":"Player 4", "sound":"barbiegirl", "color":"#FF69B4" },
+			5 : { "name":"Player 5", "sound":"servicebell", "color":"#808000" },
+			6 : { "name":"Player 6", "sound":"slotmachine", "color":"#A52A2A" }
+		};
+		var sounds = {
+			"barbiegirl":"Barbie Girl",
+			"buzzer":"Classic Buzzer",
+			"fanfare":"Fanfare",
+			"fart":"Fart",
+			"gun1":"Gun 1",
+			"gun2":"Gun 2",
+			"gun3":"Gun 3",
+			"quack":"Quack",
+			"servicebell":"Service Bell",
+			"slotmachine":"Slotmachine",
+			"tvtotal":"TV-Total-Buzzer",
+			"gong":"Gong",
+			"cork":"Cork",
+			"schweinebacke":"Yippie-Ya-Yay Schweinebacke",
+			"egal":"Egal"
+		};
+		// #################################
+
+		window.onbeforeunload = function() { return 'Are you sure you want to leave?'; };
+
+		var timer = null;
+		var startTime = null;
+		function handleKeyDown(event) {
+			// reset if requested
+			if(event.keyCode == 8) {
+				if(timer != null) {
+					clearInterval(timer);
+					startTime = null;
+					timer = null;
+				}
+				reset();
+				return;
+			}
+			// start timer if not already started
+			if(timer == null) {
+				startTime = Date.now();
+				timer = setInterval(function() {
+					let delta = Date.now() - startTime;
+					player.innerText = msToTime(delta);
+				}, 100);
+				spnTimerInfo.style.opacity = 0;
+				return;
+			}
+			// stop timer
+			let delta = Date.now() - startTime;
+			clearInterval(timer);
+			startTime = null;
+			timer = null;
+			spnTimerInfo.style.opacity = 0.2;
+			// handle buzzer key
+			switch(event.keyCode) {
+				case 49:
+					playerBuzzer(1, msToTime(delta));
+					break;
+				case 50:
+					playerBuzzer(2, msToTime(delta));
+					break;
+				case 51:
+					playerBuzzer(3, msToTime(delta));
+					break;
+				case 52:
+					playerBuzzer(4, msToTime(delta));
+					break;
+				case 53:
+					playerBuzzer(5, msToTime(delta));
+					break;
+				case 54:
+					playerBuzzer(6, msToTime(delta));
+					break;
+				case 88:
+					playSound('fail');
+					break;
+			}
+		}
+
+		function msToTime(s) {
+			var ms = s % 1000;
+			s = (s - ms) / 1000;
+			var secs = s % 60;
+			s = (s - secs) / 60;
+			var mins = s % 60;
+			var hrs = (s - mins) / 60;
+			return /*pad(hrs) + ':' +*/ pad(mins) + ':' + pad(secs) + '.' + pad(ms, 3);
+		}
+		function pad(n, z) {
+			z = z || 2;
+			return ('00' + n).slice(-z);
+		}
+
+		var currentTimeout = null;
+		function playerBuzzer(player, text='') {
+			var playerSettings = players[player];
+			set(playerSettings['color'], playerSettings['name']);
+			playSound(playerSettings['sound']);
+
+			clearTimeout(currentTimeout);
+			currentTimeout = setTimeout(function(){ reset(text); }, 3000);
+		}
+		function set(color, text) {
+			body.style.backgroundColor = color;
+			player.innerHTML = text;
+		}
+		function reset(text='') {
+			body.style.backgroundColor = 'initial';
+			player.innerHTML = text;
+		}
+		function playSound(trackName) {
+			var audio = new Audio('sounds/'+trackName+'.mp3');
+			audio.play();
+		}
+
+		function loadSettings() {
+			var settingsString = getCookie('BuzzerSettings');
+			if(typeof settingsString !== 'undefined' && settingsString != '') {
+				var tmpPlayers = JSON.parse(settingsString);
+				if(tmpPlayers != null) {
+					players = tmpPlayers;
+					console.log('Settings loaded from Cookie! ' + settingsString);
+				}
+			}
+		}
+		function saveSettings() {
+			var settingsString = JSON.stringify(players);
+			setCookie('BuzzerSettings', settingsString, 999);
+		}
+
+		function loadSettingsForm() {
+			removeAllOptions(sltPlayer1Sound);
+			removeAllOptions(sltPlayer2Sound);
+			removeAllOptions(sltPlayer3Sound);
+			removeAllOptions(sltPlayer4Sound);
+			removeAllOptions(sltPlayer5Sound);
+			removeAllOptions(sltPlayer6Sound);
+			for(index in sounds) {
+				sltPlayer1Sound.options[sltPlayer1Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer2Sound.options[sltPlayer2Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer3Sound.options[sltPlayer3Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer4Sound.options[sltPlayer4Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer5Sound.options[sltPlayer5Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer6Sound.options[sltPlayer6Sound.options.length] = new Option(sounds[index], index);
+			}
+			for(var i = 1; i <= 6; i++) {
+				document.getElementById('txtPlayer'+i+'Name').value = players[i]['name'];
+				document.getElementById('clrPlayer'+i+'Color').value = players[i]['color'];
+				document.getElementById('sltPlayer'+i+'Sound').value = players[i]['sound'];
+			}
+		}
+		function saveSettingsForm() {
+			for(var i = 1; i <= 6; i++) {
+				players[i]['name'] = document.getElementById('txtPlayer'+i+'Name').value;
+				players[i]['color'] = document.getElementById('clrPlayer'+i+'Color').value;
+				players[i]['sound'] = document.getElementById('sltPlayer'+i+'Sound').value;
+			}
+			saveSettings();
+		}
+
+		function removeAllOptions(selectBox) {
+			while(selectBox.options.length > 0) {
+				selectBox.remove(0);
+			}
+		}
+	</script>
+</head>
+<body id='body' onkeydown='handleKeyDown(event)' onload='loadSettings()'>
+
+	<h1 id='player'></h1>
+
+	<button id='btnSettings' onclick='loadSettingsForm();settings.style.display="block"'>⚙️</button>
+	<div id='settings' style='display:none'>
+		<table>
+			<tr>
+				<th>1</th>
+				<td><input id='txtPlayer1Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer1Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer1Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td><input id='txtPlayer2Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer2Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer2Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td><input id='txtPlayer3Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer3Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer3Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td><input id='txtPlayer4Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer4Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer4Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td><input id='txtPlayer5Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer5Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer5Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td><input id='txtPlayer6Name' onchange='saveSettingsForm()' /></td>
+				<td><input type='color' id='clrPlayer6Color' onchange='saveSettingsForm()' /></td>
+				<td><select id='sltPlayer6Sound' onchange='saveSettingsForm()' /></td>
+			</tr>
+			<tr>
+				<th colspan='4'><button id='btnSave' onclick='saveSettingsForm();settings.style.display="none"'>Save & Close</button></th>
+			</tr>
+		</table>
+	</div>
+
+	<div id='spnTimerInfo'>Press any key to start the timer...</div>
+
+</body>
+</html>

@@ -14,6 +14,8 @@ You can test the webapps by pressing the keys 1-6 on your keyboard. You can also
   Shows player name and plays sound when key 1..6 is pressed
 - [Buzzer Webapp With Bars](https://schorschii.github.io/buzz1000/webapp/buzzer-bars.html)  
   Plays sound when key 1..6 is pressed and displays the score of each player graphical with a vertical bar for comparison.
+- [Buzzer Webapp With Timer](https://schorschii.github.io/buzz1000/webapp/buzzer-timer.html)  
+  Starts a timer when any key is pressed, stops it and plays a sound when key 1..6 is pressed and displays the last stopwatch time.
 
 Each buzzer is equipped with 14 LEDs, which start to play different light effects when pressed. This makes it clear which player pressed his buzzer first.
 
