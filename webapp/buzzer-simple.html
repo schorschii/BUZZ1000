@@ -12,6 +12,7 @@
 			height: 100%;
 			margin: 0px;
 			transition: background-color 0.2s ease;
+			font-size: 24px;
 		}
 		#player {
 			font-size: 180px;
@@ -21,10 +22,26 @@
 			position: fixed;
 			top: 10px;
 			left: 10px;
+			transition: opacity 0.2s ease;
+			background: transparent;
+			color: white;
+			border: none;
+			border-radius: 2px;
 			opacity: 0.2;
+			font-weight: bold;
+			padding: 4px;
+			animation: blink 3s linear 0s;
 		}
 		#btnSettings:hover, #btnSettings:focus {
 			opacity: 1;
+		}
+		#btnSettings:active {
+			background: white;
+			color: black;
+		}
+		#btnSave {
+			width: 100%;
+			font-weight: bold;
 		}
 		#settings {
 			border: 1px solid white;
@@ -34,6 +51,23 @@
 			top: 10px;
 			left: 10px;
 			padding: 5px;
+		}
+		input:not([type=color]), select, textarea, button {
+			font-size: inherit;
+			font-family: inherit;
+			padding: 4px;
+		}
+		input[type=color] {
+			padding: 2px;
+			height: 30px;
+		}
+		@keyframes blink {
+			00% {opacity: 1.0}
+			20% {opacity: 0.2}
+			40% {opacity: 1.0}
+			60% {opacity: 0.2}
+			80% {opacity: 1.0}
+			100% {opacity: 0.2}
 		}
 		@media (prefers-color-scheme: dark) {
 		}
@@ -216,7 +250,7 @@
 				<td><select id='sltPlayer6Sound' onchange='saveSettingsForm()' /></td>
 			</tr>
 			<tr>
-				<th colspan='4'><button onclick='saveSettingsForm();settings.style.display="none"'>Save</button></th>
+				<th colspan='4'><button id='btnSave' onclick='saveSettingsForm();settings.style.display="none"'>Save & Close</button></th>
 			</tr>
 		</table>
 	</div>
