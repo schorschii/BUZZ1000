@@ -14,6 +14,16 @@
 			margin: 0px;
 			transition: background-color 0.2s ease;
 		}
+		#forkme {
+			position: fixed;
+			top: 0px; right: 0px;
+			display: inline-block;
+			animation: forkme 2s ease 5s forwards;
+		}
+		@keyframes forkme {
+			00% {opacity: 1.0}
+			100% {opacity: 0.0; pointer-events: none;}
+		}
 		#player {
 			position: fixed;
 			top: 0px;
@@ -388,6 +398,8 @@
 	</div>
 
 	<h1 id='player'></h1>
+
+	<a id='forkme' href='https://github.com/schorschii/buzz1000' target='_blank'><img src='forkme.png' /></a>
 
 </body>
 </html>
