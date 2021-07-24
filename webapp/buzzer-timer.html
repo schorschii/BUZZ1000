@@ -142,22 +142,22 @@
 			// handle buzzer key
 			switch(event.keyCode) {
 				case 49:
-					playerBuzzer(1, msToTime(delta));
+					playerBuzzer(1, msToTime(delta)+"\n"+players[1]['name']);
 					break;
 				case 50:
-					playerBuzzer(2, msToTime(delta));
+					playerBuzzer(2, msToTime(delta)+"\n"+players[2]['name']);
 					break;
 				case 51:
-					playerBuzzer(3, msToTime(delta));
+					playerBuzzer(3, msToTime(delta)+"\n"+players[3]['name']);
 					break;
 				case 52:
-					playerBuzzer(4, msToTime(delta));
+					playerBuzzer(4, msToTime(delta)+"\n"+players[4]['name']);
 					break;
 				case 53:
-					playerBuzzer(5, msToTime(delta));
+					playerBuzzer(5, msToTime(delta)+"\n"+players[5]['name']);
 					break;
 				case 54:
-					playerBuzzer(6, msToTime(delta));
+					playerBuzzer(6, msToTime(delta)+"\n"+players[6]['name']);
 					break;
 				case 88:
 					playSound('fail');
@@ -182,7 +182,7 @@
 		var currentTimeout = null;
 		function playerBuzzer(player, text='') {
 			var playerSettings = players[player];
-			set(playerSettings['color'], playerSettings['name']);
+			set(playerSettings['color'], (text=='' ? playerSettings['name'] : text));
 			playSound(playerSettings['sound']);
 
 			clearTimeout(currentTimeout);
@@ -190,11 +190,11 @@
 		}
 		function set(color, text) {
 			body.style.backgroundColor = color;
-			player.innerHTML = text;
+			player.innerText = text;
 		}
 		function reset(text='') {
 			body.style.backgroundColor = 'initial';
-			player.innerHTML = text;
+			player.innerText = text;
 		}
 		function playSound(trackName) {
 			var audio = new Audio('sounds/'+trackName+'.mp3');
