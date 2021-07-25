@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>BUZZER</title>
-	<link rel='shortcut icon' type='image/svg' href='buzzer.svg'>
-	<script src='cookie.js'></script>
+	<title>BUZZER (Bars)</title>
+	<meta charset='utf-8'/>
+	<link rel='shortcut icon' type='image/svg' href='assets/buzzer.svg'>
+	<script src='assets/global.js'></script>
 	<style>
 		html, body {
 			font-family: 'Ubuntu', sans-serif;
@@ -138,7 +139,6 @@
 		}
 	</style>
 	<script>
-		// #################################
 		var players = {
 			1 : { "name":"Player 1", "sound":"quack", "color":"#00e8a4", "score":3 },
 			2 : { "name":"Player 2", "sound":"gun1", "color":"#ffbd26", "score":5 },
@@ -147,41 +147,6 @@
 			5 : { "name":"Player 5", "sound":"servicebell", "color":"#8b72da", "score":4 },
 			6 : { "name":"Player 6", "sound":"slotmachine", "color":"#8ed7fa", "score":2 }
 		};
-		var sounds = {
-			"barbiegirl":"Barbie Girl",
-			"buzzer":"Classic Buzzer",
-			"fanfare":"Fanfare",
-			"fart":"Fart",
-			"gun1":"Gun 1",
-			"gun2":"Gun 2",
-			"gun3":"Gun 3",
-			"quack":"Quack",
-			"servicebell":"Service Bell",
-			"slotmachine":"Slotmachine",
-			"tvtotal":"TV-Total-Buzzer",
-			"gong":"Gong",
-			"cork":"Cork",
-			"schweinebacke":"Yippie-Ya-Yay Schweinebacke",
-			"egal":"Egal",
-			"angry-scream":"Angry Scream",
-			"confused-scream":"Confused Scream",
-			"wilhelm-scream":"Wilhelm Scream",
-			"beethoven":"Beethoven",
-			"bhc":"Beverly Hills Cop",
-			"cat":"Cat",
-			"crazy-chick":"Crazy Chick",
-			"duck":"Duck",
-			"froehlich":"Warum bin ich so fröhlich",
-			"groan":"Groan",
-			"otto":"Otto",
-			"whip":"Whip",
-			"ringelingeling":"Ringelingeling",
-			"sendung-mit-der-maus":"Sendung mit der Maus",
-			"shaver":"Shaver",
-			"travelling-with-deutsche-bahn":"Thank you for travelling with DB",
-			"tusch":"Tusch"
-		};
-		// #################################
 
 		window.onbeforeunload = function() { return 'Are you sure you want to leave?'; };
 
@@ -416,7 +381,7 @@
 
 	<h1 id='player'></h1>
 
-	<a id='forkme' href='https://github.com/schorschii/buzz1000' target='_blank'><img src='forkme.png' /></a>
+	<a id='forkme' href='https://github.com/schorschii/buzz1000' target='_blank'><img src='assets/forkme.png' /></a>
 
 </body>
 </html>
