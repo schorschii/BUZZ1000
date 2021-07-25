@@ -12,6 +12,12 @@
 		.bold {
 			font-weight: bold;
 		}
+		.hint {
+			color: gray;
+			font-size: 90%;
+			max-width: 500px;
+			margin-bottom: 10px;
+		}
 		.infobox {
 			display: inline-block;
 			padding: 0px 16px;
@@ -29,10 +35,23 @@
 
 	<p>Please connect the system to your computer and open a buzzer app:</p>
 	<ul>
-		<li><a href="webapp/buzzer-simple.html">Simple Buzzer App</a></li>
-		<li><a href="webapp/buzzer-bars.html">Buzzer App With Bars</a></li>
-		<li><a href="webapp/buzzer-timer.html">Buzzer App With Timer</a></li>
-		<li><a href="webapp/buzzer-separate-timers.html">Buzzer App With Separate Timers</a></li>
+		<li>
+			<a href="webapp/buzzer-simple.html">Simple Buzzer App</a>
+			<div class="hint">Shows player name and plays sound when key 1..6 is pressed.</div>
+		</li>
+		<li>
+			<a href="webapp/buzzer-bars.html">Buzzer App With Bars</a>
+			<div class="hint">Plays sound when key 1..6 is pressed and displays the score of each player graphical with a vertical bar for comparison.</div>
+		</li>
+		<li>
+			<a href="webapp/buzzer-timer.html">Buzzer App With Timer</a>
+			<div class="hint">Starts a timer when any key is pressed, stops it and plays a sound when key 1..6 is pressed and displays the last stopwatch time.</div>
+		</li>
+		<li>
+			<a href="webapp/buzzer-separate-timers.html">Buzzer App With Separate Timers</a>
+			<div class="hint">Starts a timer for each player when any key is pressed, stops the individual timer and plays a sound when key 1..6 is pressed.</div>
+			<div class="hint"><i>Hint: buzzer lock timeout (constant <code>BUZZER_LOCK_TIMEOUT</code> in Arduino <code>buzzer.ino</code> file) should be set to <code>0</code> for this webapp.</i></div>
+		</li>
 	</ul>
 
 	<div class='infobox'>
