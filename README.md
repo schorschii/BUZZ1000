@@ -32,7 +32,7 @@ The system's main components are:
 Jack connector pinout:  
 ![Jack Connector Pinout](.github/jack-pinout.png)
 
-## Software Documentation
+## Arduino Software Update Instructions
 This is how you can update your buzzer controller.
 
 0. Install the [Arduino IDE](https://www.arduino.cc/en/software) and connect your Arduino.
