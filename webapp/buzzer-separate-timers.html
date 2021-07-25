@@ -7,7 +7,7 @@
 	<style>
 		html, body {
 			font-family: 'Ubuntu', sans-serif;
-			font-size: 24px;
+			font-size: 28px;
 			color: white;
 			background-color: black;
 			text-align: center;
@@ -106,6 +106,29 @@
 			left: 10px;
 			right: 10px;
 		}
+		.gold {
+			background: #BF953F;
+			background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+			filter: drop-shadow(0px 0px 4px black);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+		.silver {
+			background: #C0C0C0;
+			background: linear-gradient(-45deg, #bcc6cc 0%, #bcc6cc 35%, #eee 50%, #bcc6cc 65%, #bcc6cc 100%);
+			filter: drop-shadow(0px 0px 4px black);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+		.bronze {
+			background: linear-gradient(-72deg, #ca7345, #ffdeca 16%, #ca7345 21%, #ffdeca 24%, #a14521 27%, #ca7345 36%, #ffdeca 45%, #ffdeca 60%, #ca7345 72%, #ffdeca 80%, #ca7345 84%, #732100);
+			filter: drop-shadow(0px 0px 4px black);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+		.stale {
+			color: rgba(255,255,255,0.2);
+		}
 	</style>
 	<script>
 		// #################################
@@ -140,38 +163,46 @@
 
 		var timer = null;
 		var startTime = null;
+		var rank = 0;
 		function handleKeyDown(event) {
 			// start timer if not already started
 			if(timer == null) {
-				for(let i in players) {
-					players[i]['active'] = 1;
+				// reset colors
+				for(var i = 1; i <= 6; i++) {
+					document.getElementById('spnPlayer'+i+'Score').classList.remove('gold');
+					document.getElementById('spnPlayer'+i+'Score').classList.remove('silver');
+					document.getElementById('spnPlayer'+i+'Score').classList.remove('bronze');
+					document.getElementById('spnPlayer'+i+'Score').classList.remove('stale');
 				}
+				// set all player timers active
+				for(let i in players)
+					players[i]['active'] = 1;
+				// start timer
 				startTime = Date.now();
 				timer = setInterval(function() {
 					let delta = Date.now() - startTime;
-					if(players[1]['active'] == 1)
-						spnPlayer1Score.innerText = msToTime(delta);
-					if(players[2]['active'] == 1)
-						spnPlayer2Score.innerText = msToTime(delta);
-					if(players[3]['active'] == 1)
-						spnPlayer3Score.innerText = msToTime(delta);
-					if(players[4]['active'] == 1)
-						spnPlayer4Score.innerText = msToTime(delta);
-					if(players[5]['active'] == 1)
-						spnPlayer5Score.innerText = msToTime(delta);
-					if(players[6]['active'] == 1)
-						spnPlayer6Score.innerText = msToTime(delta);
+					for(var i = 1; i <= 6; i++)
+						if(players[i]['active'] == 1)
+							document.getElementById('spnPlayer'+i+'Score').innerText = msToTime(delta);
 				}, 100);
+				// hide timer start hint
 				spnTimerInfo.style.opacity = 0;
 				return;
 			}
 			// reset if requested
 			if(event.keyCode == 8 || event.keyCode == 13 || event.keyCode == 32) {
+				// show timer start hint
 				spnTimerInfo.style.opacity = 0.2;
+				// change text color of still running timers
+				for(var i = 1; i <= 6; i++)
+					if(players[i]['active'] == 1)
+						document.getElementById('spnPlayer'+i+'Score').classList.add('stale');
+				// stop timer and reset view
 				if(timer != null) {
 					clearInterval(timer);
 					startTime = null;
 					timer = null;
+					rank = 0;
 				}
 				reset();
 				return;
@@ -222,7 +253,12 @@
 			set(playerSettings['color'], playerSettings['name']);
 			playSound(playerSettings['sound']);
 
+			// set player timer 'active' to 0 and change color for 1st, 2nd and 3rd player
 			players[player]['active'] = 0;
+			rank ++;
+			if(rank == 1) document.getElementById('spnPlayer'+player+'Score').classList.add('gold');
+			if(rank == 2) document.getElementById('spnPlayer'+player+'Score').classList.add('silver');
+			if(rank == 3) document.getElementById('spnPlayer'+player+'Score').classList.add('bronze');
 
 			clearTimeout(currentTimeout);
 			currentTimeout = setTimeout(function(){ reset(); }, 3000);
@@ -304,7 +340,7 @@
 
 		<div class='player'>
 			<div class='score'>
-				<span id='spnPlayer1Score' class='score'>0</span>
+				<span id='spnPlayer1Score' class='score'>00:00.0</span>
 			</div>
 			<div class='name'>
 				<input id='txtPlayer1Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
@@ -317,7 +353,7 @@
 
 		<div class='player'>
 			<div class='score'>
-				<span id='spnPlayer2Score' class='score'>0</span>
+				<span id='spnPlayer2Score' class='score'>00:00.0</span>
 			</div>
 			<div class='name'>
 				<input id='txtPlayer2Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
@@ -330,7 +366,7 @@
 
 		<div class='player'>
 			<div class='score'>
-				<span id='spnPlayer3Score' class='score'>0</span>
+				<span id='spnPlayer3Score' class='score'>00:00.0</span>
 			</div>
 			<div class='name'>
 				<input id='txtPlayer3Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
@@ -343,7 +379,7 @@
 
 		<div class='player'>
 			<div class='score'>
-				<span id='spnPlayer4Score' class='score'>0</span>
+				<span id='spnPlayer4Score' class='score'>00:00.0</span>
 			</div>
 			<div class='name'>
 				<input id='txtPlayer4Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
@@ -356,7 +392,7 @@
 
 		<div class='player'>
 			<div class='score'>
-				<span id='spnPlayer5Score' class='score'>0</span>
+				<span id='spnPlayer5Score' class='score'>00:00.0</span>
 			</div>
 			<div class='name'>
 				<input id='txtPlayer5Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
@@ -369,7 +405,7 @@
 
 		<div class='player'>
 			<div class='score'>
-				<span id='spnPlayer6Score' class='score'>0</span>
+				<span id='spnPlayer6Score' class='score'>00:00.0</span>
 			</div>
 			<div class='name'>
 				<input id='txtPlayer6Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
