@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BUZZER</title>
+	<link rel='shortcut icon' type='image/svg' href='buzzer.svg'>
+	<script src='cookie.js'></script>
+	<style>
+		html, body {
+			font-family: 'Ubuntu', sans-serif;
+			font-size: 24px;
+			color: white;
+			background-color: black;
+			text-align: center;
+			height: 100%;
+			margin: 0px;
+			transition: background-color 0.2s ease;
+		}
+		#forkme {
+			position: fixed;
+			top: 0px; right: 0px;
+			display: inline-block;
+			animation: forkme 2s ease 5s forwards;
+		}
+		@keyframes forkme {
+			00% {opacity: 1.0}
+			100% {opacity: 0.0; pointer-events: none;}
+		}
+		#player {
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			font-size: 180px;
+			padding: 10%;
+			margin: 0px;
+			backdrop-filter: blur(40px);
+			transition: opacity 0.2s ease;
+			pointer-events: none;
+			opacity: 0;
+		}
+		#container {
+			position: fixed;
+			top: 40px;
+			left: 0px;
+			bottom: 0px;
+			right: 0px;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: stretch;
+			justify-content: center;
+		}
+		#container > .player {
+			margin: 2%;
+			flex-grow: 1;
+			flex-shrink: 1;
+		}
+		#container > .player > .name {
+			height: 10%;
+		}
+		#container > .player > .score {
+			font-weight: bold;
+			height: 10%;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			align-items: center;
+		}
+		#container input,
+		#container select {
+			background-color: transparent;
+			text-align: center;
+			border: 1px solid transparent;
+			border-radius: 2px;
+			color: inherit;
+			font-family: inherit;
+			font-size: inherit;
+			transition: border 0.2s ease;
+			width: 100%;
+			box-sizing: border-box;
+		}
+		#container input:focus,
+		#container select:focus {
+			outline: 2px solid white;
+			outline-offset: 0px;
+		}
+		#container select option {
+			background-color: black;
+		}
+		#container > .player > .name:hover input,
+		#container > .player > .name:hover select {
+			border: 1px solid gray;
+		}
+		#container > .player > .name > .additional {
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+		#container > .player > .name:hover > .additional {
+			opacity: 1;
+		}
+		#spnTimerInfo {
+			pointer-events: none;
+			position: absolute;
+			top: 15px;
+			left: 10px;
+			right: 10px;
+		}
+	</style>
+	<script>
+		// #################################
+		var players = {
+			1 : { "name":"Player 1", "sound":"quack", "color":"#00e8a4", "active":0 },
+			2 : { "name":"Player 2", "sound":"gun1", "color":"#ffbd26", "active":0 },
+			3 : { "name":"Player 3", "sound":"gun2", "color":"#ff7f7d", "active":0 },
+			4 : { "name":"Player 4", "sound":"barbiegirl", "color":"#6c848f", "active":0 },
+			5 : { "name":"Player 5", "sound":"servicebell", "color":"#8b72da", "active":0 },
+			6 : { "name":"Player 6", "sound":"slotmachine", "color":"#8ed7fa", "active":0 }
+		};
+		var sounds = {
+			"barbiegirl":"Barbie Girl",
+			"buzzer":"Classic Buzzer",
+			"fanfare":"Fanfare",
+			"fart":"Fart",
+			"gun1":"Gun 1",
+			"gun2":"Gun 2",
+			"gun3":"Gun 3",
+			"quack":"Quack",
+			"servicebell":"Service Bell",
+			"slotmachine":"Slotmachine",
+			"tvtotal":"TV-Total-Buzzer",
+			"gong":"Gong",
+			"cork":"Cork",
+			"schweinebacke":"Yippie-Ya-Yay Schweinebacke",
+			"egal":"Egal"
+		};
+		// #################################
+
+		window.onbeforeunload = function() { return 'Are you sure you want to leave?'; };
+
+		var timer = null;
+		var startTime = null;
+		function handleKeyDown(event) {
+			// start timer if not already started
+			if(timer == null) {
+				for(let i in players) {
+					players[i]['active'] = 1;
+				}
+				startTime = Date.now();
+				timer = setInterval(function() {
+					let delta = Date.now() - startTime;
+					if(players[1]['active'] == 1)
+						spnPlayer1Score.innerText = msToTime(delta);
+					if(players[2]['active'] == 1)
+						spnPlayer2Score.innerText = msToTime(delta);
+					if(players[3]['active'] == 1)
+						spnPlayer3Score.innerText = msToTime(delta);
+					if(players[4]['active'] == 1)
+						spnPlayer4Score.innerText = msToTime(delta);
+					if(players[5]['active'] == 1)
+						spnPlayer5Score.innerText = msToTime(delta);
+					if(players[6]['active'] == 1)
+						spnPlayer6Score.innerText = msToTime(delta);
+				}, 100);
+				spnTimerInfo.style.opacity = 0;
+				return;
+			}
+			// reset if requested
+			if(event.keyCode == 8 || event.keyCode == 13 || event.keyCode == 32) {
+				spnTimerInfo.style.opacity = 0.2;
+				if(timer != null) {
+					clearInterval(timer);
+					startTime = null;
+					timer = null;
+				}
+				reset();
+				return;
+			}
+			// handle buzzer key
+			switch(event.keyCode) {
+				case 49:
+					playerBuzzer(1);
+					break;
+				case 50:
+					playerBuzzer(2);
+					break;
+				case 51:
+					playerBuzzer(3);
+					break;
+				case 52:
+					playerBuzzer(4);
+					break;
+				case 53:
+					playerBuzzer(5);
+					break;
+				case 54:
+					playerBuzzer(6);
+					break;
+				case 88:
+					playSound('fail');
+					break;
+			}
+		}
+
+		function msToTime(s) {
+			var ms = s % 1000;
+			s = (s - ms) / 1000;
+			var secs = s % 60;
+			s = (s - secs) / 60;
+			var mins = s % 60;
+			var hrs = (s - mins) / 60;
+			return /*pad(hrs) + ':' +*/ pad(mins) + ':' + pad(secs) + '.' + pad(Math.round(ms/100), 1);
+		}
+		function pad(n, z) {
+			z = z || 2;
+			return ('00' + n).slice(-z);
+		}
+
+		var currentTimeout = null;
+		function playerBuzzer(player) {
+			var playerSettings = players[player];
+			set(playerSettings['color'], playerSettings['name']);
+			playSound(playerSettings['sound']);
+
+			players[player]['active'] = 0;
+
+			clearTimeout(currentTimeout);
+			currentTimeout = setTimeout(function(){ reset(); }, 3000);
+		}
+		function set(color, text) {
+			body.style.backgroundColor = color;
+			player.innerHTML = text;
+			player.style.opacity = 1;
+		}
+		function reset() {
+			body.style.backgroundColor = 'initial';
+			player.innerHTML = '';
+			player.style.opacity = 0;
+		}
+		function playSound(trackName) {
+			var audio = new Audio('sounds/'+trackName+'.mp3');
+			audio.play();
+		}
+
+		function loadSettings() {
+			var settingsString = getCookie('BuzzerSettings');
+			if(typeof settingsString !== 'undefined' && settingsString != '') {
+				var tmpPlayers = JSON.parse(settingsString);
+				if(tmpPlayers != null) {
+					players = tmpPlayers;
+					console.log('Settings loaded from Cookie! ' + settingsString);
+					for(var i = 1; i <= 6; i++) {
+						if(typeof players[i]['score'] === 'undefined') { players[i]['score'] = 0; }
+					}
+				}
+			}
+			loadSettingsForm();
+		}
+		function saveSettings() {
+			var settingsString = JSON.stringify(players);
+			setCookie('BuzzerSettings', settingsString, 999);
+		}
+
+		function loadSettingsForm() {
+			removeAllOptions(sltPlayer1Sound);
+			removeAllOptions(sltPlayer2Sound);
+			removeAllOptions(sltPlayer3Sound);
+			removeAllOptions(sltPlayer4Sound);
+			removeAllOptions(sltPlayer5Sound);
+			removeAllOptions(sltPlayer6Sound);
+			for(index in sounds) {
+				sltPlayer1Sound.options[sltPlayer1Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer2Sound.options[sltPlayer2Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer3Sound.options[sltPlayer3Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer4Sound.options[sltPlayer4Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer5Sound.options[sltPlayer5Sound.options.length] = new Option(sounds[index], index);
+				sltPlayer6Sound.options[sltPlayer6Sound.options.length] = new Option(sounds[index], index);
+			}
+			for(var i = 1; i <= 6; i++) {
+				document.getElementById('txtPlayer'+i+'Name').value = players[i]['name'];
+				document.getElementById('clrPlayer'+i+'Color').value = players[i]['color'];
+				document.getElementById('sltPlayer'+i+'Sound').value = players[i]['sound'];
+			}
+		}
+		function saveSettingsForm() {
+			for(var i = 1; i <= 6; i++) {
+				players[i]['name'] = document.getElementById('txtPlayer'+i+'Name').value;
+				players[i]['color'] = document.getElementById('clrPlayer'+i+'Color').value;
+				players[i]['sound'] = document.getElementById('sltPlayer'+i+'Sound').value;
+			}
+			saveSettings();
+		}
+
+		function removeAllOptions(selectBox) {
+			while(selectBox.options.length > 0) {
+				selectBox.remove(0);
+			}
+		}
+	</script>
+</head>
+<body id='body' onkeydown='handleKeyDown(event)' onload='loadSettings();'>
+
+	<div id='container'>
+
+		<div class='player'>
+			<div class='score'>
+				<span id='spnPlayer1Score' class='score'>0</span>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer1Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer1Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer1Sound' onchange='saveSettingsForm()' ></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='score'>
+				<span id='spnPlayer2Score' class='score'>0</span>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer2Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer2Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer2Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='score'>
+				<span id='spnPlayer3Score' class='score'>0</span>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer3Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer3Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer3Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='score'>
+				<span id='spnPlayer4Score' class='score'>0</span>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer4Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer4Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer4Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='score'>
+				<span id='spnPlayer5Score' class='score'>0</span>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer5Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer5Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer5Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+
+		<div class='player'>
+			<div class='score'>
+				<span id='spnPlayer6Score' class='score'>0</span>
+			</div>
+			<div class='name'>
+				<input id='txtPlayer6Name' onchange='saveSettingsForm()' onkeydown='event.stopPropagation()' />
+				<div class='additional'>
+					<input type='color' id='clrPlayer6Color' onchange='saveSettingsForm()' />
+					<select id='sltPlayer6Sound' onchange='saveSettingsForm()'></select>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h1 id='player'></h1>
+
+	<div id='spnTimerInfo'>Press any key to start the timer...</div>
+
+	<a id='forkme' href='https://github.com/schorschii/buzz1000' target='_blank'><img src='forkme.png' /></a>
+
+</body>
+</html>
