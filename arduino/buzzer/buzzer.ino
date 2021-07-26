@@ -1,15 +1,16 @@
 #include <Keyboard.h>
 #include "FastLED.h"
 
-
-#define LED_TYPE    WS2811
-#define COLOR_ORDER GRB
-#define NUM_LEDS    14
-#define BRIGHTNESS         255
-#define FRAMES_PER_SECOND  120
+// Constants
+#define LED_TYPE            WS2811
+#define COLOR_ORDER         GRB
+#define NUM_LEDS            14
+#define BRIGHTNESS          255
+#define FRAMES_PER_SECOND   120
 #define BUZZER_LOCK_TIMEOUT 2000
 
-// for Arduino MKR WiFi 1010
+// Pin Definition (for Arduino MKR WiFi 1010)
+#define BUZZER_LOCK_TIMEOUT_SWITCH 6
 #define BUZZER1_LED     0
 #define BUZZER1_SWITCH  A0
 #define BUZZER2_LED     1
@@ -24,16 +25,17 @@
 #define BUZZER6_SWITCH  A5
 
 CRGB leds[6][NUM_LEDS];
+bool buzzerStates[6];
 
 void setup() {
-  Serial.begin(9600);
-  delay(1000);
+  delay(800);
   pinMode(BUZZER1_SWITCH, INPUT_PULLUP);
   pinMode(BUZZER2_SWITCH, INPUT_PULLUP);
   pinMode(BUZZER3_SWITCH, INPUT_PULLUP);
   pinMode(BUZZER4_SWITCH, INPUT_PULLUP);
   pinMode(BUZZER5_SWITCH, INPUT_PULLUP);
   pinMode(BUZZER6_SWITCH, INPUT_PULLUP);
+  pinMode(BUZZER_LOCK_TIMEOUT_SWITCH, INPUT_PULLUP);
   pinMode(BUZZER1_LED, OUTPUT);
   pinMode(BUZZER2_LED, OUTPUT);
   pinMode(BUZZER3_LED, OUTPUT);
@@ -52,56 +54,84 @@ byte currentBuzzer = 0;
 unsigned long lastPress = 0;
 
 void loop() {
-  // Call the current pattern function once, updating the 'leds' array
+  // call the current pattern function once, updating the 'leds' array
   gPatterns[gCurrentPatternNumber]();
   EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
   EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
 
-// check button press
-if(lastPress == 0 || millis()-lastPress > BUZZER_LOCK_TIMEOUT) {
-  if(digitalRead(BUZZER1_SWITCH) == LOW) {
-    startLed1();
-    pressKey('1');
-  } else
-  if(digitalRead(BUZZER2_SWITCH) == LOW) {
-    startLed2();
-    pressKey('2');
-  } else
-  if(digitalRead(BUZZER3_SWITCH) == LOW) {
-    startLed3();
-    pressKey('3');
-  } else
-  if(digitalRead(BUZZER4_SWITCH) == LOW) {
-    startLed4();
-    pressKey('4');
-  } else
-  if(digitalRead(BUZZER5_SWITCH) == LOW) {
-    startLed5();
-    pressKey('5');
-  } else
-  if(digitalRead(BUZZER6_SWITCH) == LOW) {
-    startLed6();
-    pressKey('6');
-  }
-} else {
-  if(digitalRead(BUZZER1_SWITCH) == LOW
-  || digitalRead(BUZZER2_SWITCH) == LOW
-  || digitalRead(BUZZER3_SWITCH) == LOW
-  || digitalRead(BUZZER4_SWITCH) == LOW
-  || digitalRead(BUZZER5_SWITCH) == LOW
-  || digitalRead(BUZZER6_SWITCH) == LOW) {
-    if(millis()-lastPress > 500) {
-      pressKey('x');
+  // check button released
+  if(digitalRead(BUZZER1_SWITCH) == HIGH)
+      buzzerStates[0] = false;
+  if(digitalRead(BUZZER2_SWITCH) == HIGH)
+      buzzerStates[1] = false;
+  if(digitalRead(BUZZER3_SWITCH) == HIGH)
+      buzzerStates[2] = false;
+  if(digitalRead(BUZZER4_SWITCH) == HIGH)
+      buzzerStates[3] = false;
+  if(digitalRead(BUZZER5_SWITCH) == HIGH)
+      buzzerStates[4] = false;
+  if(digitalRead(BUZZER6_SWITCH) == HIGH)
+      buzzerStates[5] = false;
+
+  // check button press
+  if(lastPress == 0 // if this is the first press since startup...
+  || digitalRead(BUZZER_LOCK_TIMEOUT_SWITCH) == LOW // ...or lock timeout ist disabled via switch
+  || millis()-lastPress > BUZZER_LOCK_TIMEOUT) { // ...or timeout is lapsed
+
+    // handle buzzer press
+    if(digitalRead(BUZZER1_SWITCH) == LOW && !buzzerStates[0]) {
+      buzzerStates[0] = true;
+      startLed1();
+      pressKey('1');
+    } else
+    if(digitalRead(BUZZER2_SWITCH) == LOW && !buzzerStates[1]) {
+      buzzerStates[1] = true;
+      startLed2();
+      pressKey('2');
+    } else
+    if(digitalRead(BUZZER3_SWITCH) == LOW && !buzzerStates[2]) {
+      buzzerStates[2] = true;
+      startLed3();
+      pressKey('3');
+    } else
+    if(digitalRead(BUZZER4_SWITCH) == LOW && !buzzerStates[3]) {
+      buzzerStates[3] = true;
+      startLed4();
+      pressKey('4');
+    } else
+    if(digitalRead(BUZZER5_SWITCH) == LOW && !buzzerStates[4]) {
+      buzzerStates[4] = true;
+      startLed5();
+      pressKey('5');
+    } else
+    if(digitalRead(BUZZER6_SWITCH) == LOW && !buzzerStates[5]) {
+      buzzerStates[5] = true;
+      startLed6();
+      pressKey('6');
     }
+
+  } else {
+
+    // buzzer locked - send 'x' instead
+    if((digitalRead(BUZZER1_SWITCH) == LOW && !buzzerStates[0])
+    || (digitalRead(BUZZER2_SWITCH) == LOW && !buzzerStates[1])
+    || (digitalRead(BUZZER3_SWITCH) == LOW && !buzzerStates[2])
+    || (digitalRead(BUZZER4_SWITCH) == LOW && !buzzerStates[3])
+    || (digitalRead(BUZZER5_SWITCH) == LOW && !buzzerStates[4])
+    || (digitalRead(BUZZER6_SWITCH) == LOW && !buzzerStates[5])
+    ) {
+      if(millis()-lastPress > 400) {
+        pressKey('x');
+      }
+    }
+
   }
-}
 
   // LED FX step
   FastLED.show();
   FastLED.delay(1000/FRAMES_PER_SECOND);
 }
 
-//CLEDController controller1;
 void startLed1() {
   currentBuzzer = 0;
   FastLED.clear(true);
@@ -148,50 +178,43 @@ void pressKey(char key) {
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
-void nextPattern()
-{
+void nextPattern() {
   // add one to the current pattern number, and wrap around at the end
   gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE(gPatterns);
 }
 
-void rainbow()
-{
+void rainbow() {
   // FastLED's built-in rainbow generator
   fill_rainbow( leds[currentBuzzer], NUM_LEDS, gHue, 7);
 }
 
-void rainbowWithGlitter()
-{
+void rainbowWithGlitter() {
   // built-in FastLED rainbow, plus some random sparkly glitter
   rainbow();
   addGlitter(80);
 }
 
-void addGlitter( fract8 chanceOfGlitter)
-{
+void addGlitter( fract8 chanceOfGlitter) {
   if( random8() < chanceOfGlitter) {
     leds[currentBuzzer][ random16(NUM_LEDS) ] += CRGB::White;
   }
 }
 
-void confetti()
-{
+void confetti() {
   // random colored speckles that blink in and fade smoothly
   fadeToBlackBy( leds[currentBuzzer], NUM_LEDS, 10);
   int pos = random16(NUM_LEDS);
   leds[currentBuzzer][pos] += CHSV( gHue + random8(64), 200, 255);
 }
 
-void sinelon()
-{
+void sinelon() {
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds[currentBuzzer], NUM_LEDS, 20);
   int pos = beatsin16(13,0,NUM_LEDS);
   leds[currentBuzzer][pos] += CHSV( gHue, 255, 192);
 }
 
-void bpm()
-{
+void bpm() {
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
   uint8_t BeatsPerMinute = 62;
   CRGBPalette16 palette = PartyColors_p;
