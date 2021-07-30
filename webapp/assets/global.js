@@ -35,6 +35,12 @@ var sounds = {
 	"haha":"Ha Ha"
 };
 
+function prefetchSounds() {
+	for(index in sounds) {
+		document.head.innerHTML += '<link rel="prefetch" href="sounds/'+index+'.mp3" as="audio">';
+	}
+}
+
 // cookie functions
 function setCookie(name,value,days) {
 	var expires = "";
