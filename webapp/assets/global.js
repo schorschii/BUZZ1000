@@ -31,7 +31,8 @@ var sounds = {
 	"sendung-mit-der-maus":"Sendung mit der Maus",
 	"shaver":"Shaver",
 	"travelling-with-deutsche-bahn":"Thank you for travelling with DB",
-	"tusch":"Tusch"
+	"tusch":"Tusch",
+	"haha":"Ha Ha"
 };
 
 // cookie functions
