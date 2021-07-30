@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<title>BUZZ1000 WebApps</title>
@@ -6,12 +7,21 @@
 	<style>
 		html, body {
 			font-family: 'Ubuntu', sans-serif;
+			background-color: black;
+			color: white;
+		}
+		a {
+			color: skyblue;
+		}
+		#container {
+			max-width: 500px;
+			margin: auto;
+			padding: 2%;
 		}
 		#forkme {
 			position: fixed;
 			top: 0px; right: 0px;
 			display: inline-block;
-			filter: drop-shadow(0px 0px 8px rgba(0,0,0,0.6));
 		}
 		.subtitle {
 			font-style: italic;
@@ -23,20 +33,20 @@
 		.hint {
 			color: gray;
 			font-size: 90%;
-			max-width: 500px;
 			margin-bottom: 10px;
 		}
 		.infobox {
-			display: inline-block;
+			background: #0f6082;
+			color: #e9ecef;
+			border: 1px solid transparent;
 			padding: 0px 16px;
-			background: #e1f1f6;
-			color: #565656;
-			border: 1px solid #49afd9;
 			border-radius: 2px;
 		}
 	</style>
 </head>
 <body>
+
+	<div id='container'>
 
 	<h1>BUZZ1000 Webapps</h1>
 	<p class='subtitle'>Arduino Controlled Buzzer System For Events</p>
@@ -76,6 +86,8 @@
 	<p>
 		Please visit the <a href="https://github.com/schorschii/buzz1000">Github repository</a> for more information.
 	</p>
+
+	</div>
 
 	<a id='forkme' href='https://github.com/schorschii/buzz1000' target='_blank'><img src='webapp/assets/forkme.png' /></a>
 
